@@ -1,0 +1,27 @@
+{
+  "name": "compliance-copilot",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Compliance Copilot - RAG over compliance PDFs (Next.js + NestJS + Supabase/pgvector + Gemini)",
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "pnpm -r build",
+    "dev": "pnpm -r --parallel dev",
+    "dev:api": "pnpm --filter @ccp/api dev",
+    "dev:web": "pnpm --filter @ccp/web dev",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "format": "prettier --write \"**/*.{ts,tsx,js,json,md}\"",
+    "db:link": "supabase link",
+    "db:push": "supabase db push --linked --yes",
+    "db:migration:list": "supabase migration list --linked",
+    "db:types": "supabase gen types typescript --linked --schema public > apps/web/src/types/database.types.ts"
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3",
+    "supabase": "^2.108.0"
+  }
+}

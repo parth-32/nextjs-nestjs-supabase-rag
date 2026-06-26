@@ -1,0 +1,22 @@
+# Local container run for the backend API.
+# Database/storage/auth are provided by managed Supabase (set in root .env).
+# Usage: cp .env.example .env && fill values && docker compose up --build
+services:
+  api:
+    build:
+      context: .
+      dockerfile: infra/Dockerfile.api
+    image: ccp-api:local
+    ports:
+      - '4000:4000'
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      API_PORT: '4000'
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'node', '-e', "fetch('http://localhost:4000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
