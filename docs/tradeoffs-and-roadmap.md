@@ -6,11 +6,11 @@
 
 - **Separation of concerns:** The API owns AI orchestration, file processing, and database access. The frontend is a thin, auth-aware client.
 - **Independent scaling:** On Vercel Services, frontend and backend deploy as separate services with distinct build steps.
-- **Assessment fit:** Demonstrates API design as a first-class deliverable, not an afterthought behind server actions.
+- **API-first design:** The backend is a standalone service with explicit REST contracts, not an afterthought behind server actions.
 
 ### Why Supabase (not a standalone vector DB)?
 
-- **One platform** for Postgres, pgvector, auth, and file storage — fewer moving parts for a 2–4 day assessment.
+- **One platform** for Postgres, pgvector, auth, and file storage — fewer moving parts to operate and secure.
 - **pgvector + HNSW** provides production-grade approximate nearest-neighbor search without operating a separate vector service.
 - **RLS policies** add defense-in-depth even though the API uses the service role.
 
@@ -49,13 +49,13 @@
 1. **Compliance PDFs are text-based** — policies, regulations, and contracts with selectable text layers.
 2. **Single-tenant per user** — each user sees only their own documents; no org/team sharing.
 3. **English-language documents** — chunking and stop-word filtering assume English prose.
-4. **Low-to-moderate concurrency** — in-process ingestion is acceptable for demo/assessment scale.
+4. **Low-to-moderate concurrency** — in-process ingestion suits the current single-user workload; a job queue is planned for higher throughput.
 5. **Gemini API availability** — external dependency; no fallback model configured.
 6. **Output is informational, not legal advice** — summaries and answers are AI-generated extracts, not certified compliance opinions.
 
 ## What we intentionally did not build
 
-Prioritized a **simple, well-engineered** solution over feature breadth (per assessment guidance):
+Prioritized a **simple, well-engineered** foundation over feature breadth:
 
 - OCR / vision-based PDF parsing
 - Document deletion or re-ingestion

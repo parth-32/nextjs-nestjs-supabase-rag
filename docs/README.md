@@ -1,19 +1,19 @@
 # Compliance Copilot — Documentation
 
-Technical documentation for the RegVia **Compliance Copilot** assessment implementation.
+Technical documentation for the Compliance Copilot platform.
 
-| Document                                          | Description                                                          |
-| ------------------------------------------------- | -------------------------------------------------------------------- |
-| [Architecture](./architecture.md)                 | System design, component boundaries, data flow, and diagrams         |
-| [Assessment Coverage](./assessment-coverage.md)   | How the implementation maps to the technical assessment requirements |
-| [RAG Implementation](./rag-implementation.md)     | Chunking, retrieval, prompts, citations, and hallucination handling  |
-| [API Reference](./api-reference.md)               | REST endpoints, auth, and streaming chat protocol                    |
-| [Tradeoffs & Roadmap](./tradeoffs-and-roadmap.md) | Design decisions, assumptions, and future improvements               |
+| Document                                          | Description                                                         |
+| ------------------------------------------------- | ------------------------------------------------------------------- |
+| [Architecture](./architecture.md)                 | System design, component boundaries, data flow, and diagrams        |
+| [Feature Overview](./feature-overview.md)         | Product capabilities and implementation mapping                     |
+| [RAG Implementation](./rag-implementation.md)     | Chunking, retrieval, prompts, citations, and hallucination handling |
+| [API Reference](./api-reference.md)               | REST endpoints, auth, and streaming chat protocol                   |
+| [Tradeoffs & Roadmap](./tradeoffs-and-roadmap.md) | Design decisions, assumptions, and future improvements              |
 
 ## Quick links
 
 - **Live app:** [https://complience-copilot.vercel.app/](https://complience-copilot.vercel.app/)
-- [Project README](../README.md) — setup, scripts, and deployment
+- [Project README](../README.md) — setup, development workflow, and deployment
 - [Supabase migrations](../supabase/migrations/) — database schema and pgvector setup
 - [Shared API types](../packages/shared/src/index.ts) — DTOs shared by frontend and backend
 

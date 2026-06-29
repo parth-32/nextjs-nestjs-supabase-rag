@@ -12,7 +12,7 @@ Upload a compliance PDF, ask grounded questions with citations (RAG), and genera
 Detailed docs in [`docs/`](docs/):
 
 - [Architecture & diagrams](docs/architecture.md)
-- [Assessment requirement coverage](docs/assessment-coverage.md)
+- [Feature overview](docs/feature-overview.md)
 - [RAG pipeline](docs/rag-implementation.md)
 - [API reference](docs/api-reference.md)
 - [Tradeoffs & roadmap](docs/tradeoffs-and-roadmap.md)
@@ -49,7 +49,19 @@ Detailed docs in [`docs/`](docs/):
 | `pnpm dev:backend` / `pnpm dev:frontend` | Run one app                          |
 | `pnpm build`                             | Build all packages                   |
 | `pnpm lint` / `pnpm typecheck`           | Lint and type-check                  |
+| `pnpm format` / `pnpm format:check`      | Format code / verify formatting      |
 | `pnpm db:push`                           | Push Supabase migrations             |
+
+## Development
+
+`pnpm install` runs Husky via the `prepare` script and installs Git hooks:
+
+| Hook       | Script           | Checks              |
+| ---------- | ---------------- | ------------------- |
+| pre-commit | `pnpm precommit` | lint + format check |
+| pre-push   | `pnpm prepush`   | full monorepo build |
+
+CI (`.github/workflows/ci.yml`) runs lint, typecheck, format check, and build on every push and pull request to `main`.
 
 ## Deployment
 
