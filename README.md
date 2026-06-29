@@ -22,20 +22,20 @@ Upload a compliance PDF, ask grounded questions with citations (RAG), and genera
    pnpm dev
    ```
 
-   Open http://localhost:3000 (web on :3000, API on :4000).
+   Open http://localhost:3000 (frontend on :3000, backend on :4000).
 
 ## Scripts
 
-| Command                         | Description                 |
-| ------------------------------- | --------------------------- |
-| `pnpm dev`                      | Run API and web in parallel |
-| `pnpm dev:api` / `pnpm dev:web` | Run one app                 |
-| `pnpm lint` / `pnpm typecheck`  | Lint and type-check         |
+| Command                                  | Description                          |
+| ---------------------------------------- | ------------------------------------ |
+| `pnpm dev`                               | Run backend and frontend in parallel |
+| `pnpm dev:backend` / `pnpm dev:frontend` | Run one app                          |
+| `pnpm lint` / `pnpm typecheck`           | Lint and type-check                  |
 
 ## Deployment
 
 - **Database:** Supabase (run migrations on your project).
-- **API:** Deploy manually (e.g. Render, Railway, Fly.io) — run `pnpm --filter @ccp/shared build && pnpm --filter @ccp/api build`, then `pnpm --filter @ccp/api start:prod`.
-- **Web:** Vercel with root directory `apps/web` (see [`apps/web/vercel.json`](apps/web/vercel.json)).
+- **Backend:** Deploy manually (e.g. Render, Railway, Fly.io) — run `pnpm --filter @ccp/shared build && pnpm --filter @ccp/backend build`, then `pnpm --filter @ccp/backend start:prod`.
+- **Frontend:** Vercel with root directory `frontend` (see [`frontend/vercel.json`](frontend/vercel.json)).
 
 Set production env vars in Render and Vercel; keep the service role key on the API only.

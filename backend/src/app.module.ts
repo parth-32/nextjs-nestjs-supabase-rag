@@ -15,7 +15,7 @@ import { HealthController } from './health/health.controller';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: [join(process.cwd(), '../../.env'), join(process.cwd(), '.env')],
+      envFilePath: [join(process.cwd(), '../.env'), join(process.cwd(), '.env')],
       load: [() => buildConfig(validateEnv(process.env))],
       cache: true,
     }),
