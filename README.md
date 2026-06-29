@@ -38,6 +38,7 @@ Upload a compliance PDF, ask grounded questions with citations (RAG), and genera
 - **Database:** Supabase (run migrations on your project).
 - **Render (frontend + backend):** Use [`render.yaml`](render.yaml) — steps below.
 - **Frontend on Vercel (optional):** Root directory `frontend` (see [`frontend/vercel.json`](frontend/vercel.json)).
+- **Backend on Vercel (optional):** Root directory `backend` (see [`backend/vercel.json`](backend/vercel.json)). Set **Framework Preset** to **Other** so the explicit `@vercel/node` config is used. Enable **Include files outside the root directory**.
 
 Set env vars on each host separately — never copy `backend/.env` into the frontend host.
 
@@ -55,6 +56,21 @@ Both services build from the **repo root** (monorepo). The API listens on Render
 | Frontend | `compliance-copilot-web` | `https://compliance-copilot-web-6o09.onrender.com` |
 
 If you rename services, update `CORS_ORIGINS`, `NEXT_PUBLIC_API_URL`, and Supabase Auth URLs to match.
+
+### Vercel (backend)
+
+In the Vercel project (**Settings → Environment Variables**), add the same backend secrets as Render:
+
+| Variable                    | Required                            |
+| --------------------------- | ----------------------------------- |
+| `SUPABASE_URL`              | yes                                 |
+| `SUPABASE_SERVICE_ROLE_KEY` | yes                                 |
+| `SUPABASE_STORAGE_BUCKET`   | yes (default `documents`)           |
+| `GEMINI_API_KEY`            | yes                                 |
+| `NODE_ENV`                  | `production`                        |
+| `CORS_ORIGINS`              | your frontend URL (comma-separated) |
+
+Without these, the function crashes on cold start with `FUNCTION_INVOCATION_FAILED`. Check **Logs** in the Vercel dashboard if `/health` returns 500.
 
 **Backend env** (`compliance-copilot-api`):
 

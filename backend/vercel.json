@@ -1,5 +1,23 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "version": 2,
+  "installCommand": "pnpm install --frozen-lockfile",
   "buildCommand": "pnpm --filter @ccp/shared build && pnpm --filter @ccp/backend build",
-  "installCommand": "pnpm install --frozen-lockfile"
+  "builds": [
+    {
+      "src": "src/main.ts",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": "../packages/shared/dist/**"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "src/main.ts",
+      "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"]
+    }
+  ],
+  "outputDirectory": "dist"
 }

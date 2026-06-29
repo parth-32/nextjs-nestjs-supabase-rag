@@ -23,7 +23,7 @@ import { HealthController } from './health/health.controller';
       pinoHttp: {
         level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
         transport:
-          process.env.NODE_ENV === 'production'
+          process.env.NODE_ENV === 'production' || process.env.VERCEL
             ? undefined
             : { target: 'pino-pretty', options: { singleLine: true } },
         redact: ['req.headers.authorization', 'req.headers.cookie'],
