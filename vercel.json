@@ -5,14 +5,14 @@
     "frontend": {
       "type": "web",
       "root": "frontend",
-      "mount": "/",
+      "routePrefix": "/",
       "framework": "nextjs",
       "buildCommand": "pnpm --filter @ccp/shared build && pnpm --filter @ccp/frontend build"
     },
     "backend": {
       "type": "web",
       "root": "backend",
-      "mount": "/api",
+      "routePrefix": "/api",
       "framework": "nestjs",
       "buildCommand": "pnpm --filter @ccp/shared build && pnpm --filter @ccp/backend build",
       "includeFiles": "packages/shared/dist/**"

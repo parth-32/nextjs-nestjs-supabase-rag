@@ -38,7 +38,7 @@ Upload a compliance PDF, ask grounded questions with citations (RAG), and genera
 - **Database:** Supabase (run migrations on your project).
 - **Render (frontend + backend):** Use [`render.yaml`](render.yaml) — steps below.
 - **Vercel Services (frontend + backend together):** One Vercel project via root [`vercel.json`](vercel.json) — steps below.
-- **Vercel (separate projects):** Root directory `frontend` or `backend` with each app's own `vercel.json`.
+- **Vercel (separate projects):** Set root directory to `frontend` or `backend` and configure build commands in each package's `package.json` (no root `vercel.json` needed).
 
 Set env vars on each host separately — never copy `backend/.env` into the frontend host.
 
@@ -46,9 +46,13 @@ Set env vars on each host separately — never copy `backend/.env` into the fron
 
 Deploy both apps on one domain (e.g. `your-app.vercel.app` for the UI, `your-app.vercel.app/api` for the API).
 
+> **If you see:** `Project framework is set to "services", but no services are declared`  
+> **Cause:** Vercel **Root Directory** is set to `backend` (or `frontend`) instead of the repo root, so it never reads root [`vercel.json`](vercel.json).  
+> **Fix:** Settings → General → Root Directory → **Reset to repo root** (empty / `.`). Or create a **new** Vercel project (do not reuse the old `*-api` backend-only project).
+
 1. **Import** the repo at [vercel.com/new](https://vercel.com/new).
 2. **Application Preset:** **Services** (not NestJS or Next.js alone).
-3. **Root Directory:** leave empty / `.` (repo root). **Do not** set it to `backend` or `frontend` — Vercel only reads root `vercel.json` from the project root.
+3. **Root Directory:** leave **empty** (repo root). Must **not** be `backend` or `frontend`.
 4. **vercel.json:** Root [`vercel.json`](vercel.json) defines `experimentalServices` for both apps.
 5. **Environment variables** (Project Settings → one set for both services):
 
@@ -87,7 +91,9 @@ If you rename services, update `CORS_ORIGINS`, `NEXT_PUBLIC_API_URL`, and Supaba
 
 ### Vercel (separate backend project)
 
-If deploying the API as its own Vercel project (not Services), use root directory `backend` and [`backend/vercel.json`](backend/vercel.json). Enable **Include files outside the root directory**. Add backend env vars from the table below plus `CORS_ORIGINS` (your frontend URL).
+If deploying the API as its own Vercel project (not Services), set root directory to `backend`, framework **NestJS**, enable **Include files outside the root directory**, and use build command:
+
+`pnpm --filter @ccp/shared build && pnpm --filter @ccp/backend build`
 
 **Backend env** (`compliance-copilot-api`):
 
