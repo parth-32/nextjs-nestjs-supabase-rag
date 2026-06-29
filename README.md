@@ -37,10 +37,38 @@ Upload a compliance PDF, ask grounded questions with citations (RAG), and genera
 
 - **Database:** Supabase (run migrations on your project).
 - **Render (frontend + backend):** Use [`render.yaml`](render.yaml) — steps below.
-- **Frontend on Vercel (optional):** Root directory `frontend` (see [`frontend/vercel.json`](frontend/vercel.json)).
-- **Backend on Vercel (optional):** Root directory `backend` (see [`backend/vercel.json`](backend/vercel.json)). Use **Framework Preset: NestJS** (auto-detected). Enable **Include files outside the root directory**.
+- **Vercel Services (frontend + backend together):** One Vercel project via root [`vercel.json`](vercel.json) — steps below.
+- **Vercel (separate projects):** Root directory `frontend` or `backend` with each app's own `vercel.json`.
 
 Set env vars on each host separately — never copy `backend/.env` into the frontend host.
+
+### Vercel Services (single project)
+
+Deploy both apps on one domain (e.g. `your-app.vercel.app` for the UI, `your-app.vercel.app/api` for the API).
+
+1. **Import** the repo at [vercel.com/new](https://vercel.com/new).
+2. **Application Preset:** **Services** (not NestJS or Next.js alone).
+3. **Root Directory:** `.` (repo root — not `backend` or `frontend`).
+4. **vercel.json:** Root [`vercel.json`](vercel.json) defines `experimentalServices` for both apps.
+5. **Environment variables** (Project Settings → one set for both services):
+
+| Variable                        | Required | Notes                      |
+| ------------------------------- | -------- | -------------------------- |
+| `SUPABASE_URL`                  | yes      | backend only (server-side) |
+| `SUPABASE_SERVICE_ROLE_KEY`     | yes      | backend only               |
+| `SUPABASE_STORAGE_BUCKET`       | yes      | default `documents`        |
+| `GEMINI_API_KEY`                | yes      | backend only               |
+| `NODE_ENV`                      | yes      | `production`               |
+| `NEXT_PUBLIC_SUPABASE_URL`      | yes      | frontend                   |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | yes      | frontend                   |
+
+Vercel auto-injects `NEXT_PUBLIC_BACKEND_URL` (e.g. `/api`) so the frontend talks to the API on the same origin — no CORS setup needed. You do **not** need `NEXT_PUBLIC_API_URL` unless overriding. For local dev, keep `NEXT_PUBLIC_API_URL=http://localhost:4000` in `frontend/.env`.
+
+6. **Verify:** Open `/` (frontend), then `/api/health` (backend).
+
+Run all services locally: `vercel dev -L` from the repo root (Vercel CLI 48.4.0+).
+
+Docs: [Vercel Services](https://vercel.com/docs/services), [routing](https://vercel.com/docs/services/routing).
 
 ### Render
 
@@ -57,20 +85,9 @@ Both services build from the **repo root** (monorepo). The API listens on Render
 
 If you rename services, update `CORS_ORIGINS`, `NEXT_PUBLIC_API_URL`, and Supabase Auth URLs to match.
 
-### Vercel (backend)
+### Vercel (separate backend project)
 
-In the Vercel project (**Settings → Environment Variables**), add the same backend secrets as Render:
-
-| Variable                    | Required                            |
-| --------------------------- | ----------------------------------- |
-| `SUPABASE_URL`              | yes                                 |
-| `SUPABASE_SERVICE_ROLE_KEY` | yes                                 |
-| `SUPABASE_STORAGE_BUCKET`   | yes (default `documents`)           |
-| `GEMINI_API_KEY`            | yes                                 |
-| `NODE_ENV`                  | `production`                        |
-| `CORS_ORIGINS`              | your frontend URL (comma-separated) |
-
-Without these, the function crashes on cold start with `FUNCTION_INVOCATION_FAILED`. Check **Logs** in the Vercel dashboard if `/health` returns 500.
+If deploying the API as its own Vercel project (not Services), use root directory `backend` and [`backend/vercel.json`](backend/vercel.json). Enable **Include files outside the root directory**. Add backend env vars from the table below plus `CORS_ORIGINS` (your frontend URL).
 
 **Backend env** (`compliance-copilot-api`):
 

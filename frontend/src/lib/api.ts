@@ -10,7 +10,8 @@ import type {
 import { API_PATHS } from '@ccp/shared';
 import { getSupabase } from './supabaseClient';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000';
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ?? process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:4000';
 
 /** Error carrying the HTTP status so callers can branch (e.g. 404 -> no data). */
 export class ApiHttpError extends Error {
