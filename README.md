@@ -24,8 +24,6 @@ Upload a compliance PDF, ask grounded questions with citations (RAG), and genera
 
    Open http://localhost:3000 (web on :3000, API on :4000).
 
-   Or with Docker: `docker compose up --build` (uses the same root `.env`).
-
 ## Scripts
 
 | Command                         | Description                 |
@@ -37,7 +35,7 @@ Upload a compliance PDF, ask grounded questions with citations (RAG), and genera
 ## Deployment
 
 - **Database:** Supabase (run migrations on your project).
-- **API:** Render via [`infra/render.yaml`](infra/render.yaml) and [`infra/Dockerfile.api`](infra/Dockerfile.api).
+- **API:** Render via [`infra/render.yaml`](infra/render.yaml).
 - **Web:** Vercel with root directory `apps/web` (see [`apps/web/vercel.json`](apps/web/vercel.json)).
 
 Set production env vars in Render and Vercel; keep the service role key on the API only.

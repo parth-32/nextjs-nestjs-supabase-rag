@@ -15,6 +15,7 @@
     "lint": "pnpm -r lint",
     "typecheck": "pnpm -r typecheck",
     "format": "prettier --write \"**/*.{ts,tsx,js,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,json,md}\"",
     "db:link": "supabase link",
     "db:push": "supabase db push --linked --yes",
     "db:migration:list": "supabase migration list --linked",

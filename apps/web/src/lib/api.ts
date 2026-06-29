@@ -7,6 +7,7 @@ import type {
   DocumentSummaryDto,
   UploadDocumentResponse,
 } from '@ccp/shared';
+import { API_PATHS } from '@ccp/shared';
 import { getSupabase } from './supabaseClient';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000';
@@ -44,22 +45,22 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
 }
 
 export const api = {
-  listDocuments: () => request<DocumentSummaryDto[]>('/documents'),
+  listDocuments: () => request<DocumentSummaryDto[]>(API_PATHS.documents),
 
-  getDocument: (id: string) => request<DocumentSummaryDto>(`/documents/${id}`),
+  getDocument: (id: string) => request<DocumentSummaryDto>(API_PATHS.document(id)),
 
-  getMessages: (id: string) => request<ChatMessageDto[]>(`/documents/${id}/messages`),
+  getMessages: (id: string) => request<ChatMessageDto[]>(API_PATHS.messages(id)),
 
-  getSummary: (id: string) => request<ComplianceSummaryDto>(`/documents/${id}/summary`),
+  getSummary: (id: string) => request<ComplianceSummaryDto>(API_PATHS.summary(id)),
 
   generateSummary: (id: string) =>
-    request<ComplianceSummaryDto>(`/documents/${id}/summary`, { method: 'POST' }),
+    request<ComplianceSummaryDto>(API_PATHS.summary(id), { method: 'POST' }),
 
   async uploadDocument(file: File): Promise<UploadDocumentResponse> {
     const headers = await authHeader();
     const form = new FormData();
     form.append('file', file);
-    const res = await fetch(`${API_URL}/documents`, {
+    const res = await fetch(`${API_URL}${API_PATHS.documents}`, {
       method: 'POST',
       headers,
       body: form,
@@ -82,7 +83,7 @@ export const api = {
     signal?: AbortSignal,
   ): Promise<void> {
     const headers = await authHeader();
-    const res = await fetch(`${API_URL}/documents/${documentId}/chat`, {
+    const res = await fetch(`${API_URL}${API_PATHS.chat(documentId)}`, {
       method: 'POST',
       headers: { ...headers, 'Content-Type': 'application/json' },
       body: JSON.stringify({ question }),

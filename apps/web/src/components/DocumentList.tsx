@@ -3,23 +3,11 @@
 import Link from 'next/link';
 import { AlertCircle, ChevronRight, FileText } from 'lucide-react';
 import type { DocumentSummaryDto } from '@ccp/shared';
+import { DOCUMENT_STATUS } from '@ccp/shared';
 import { Card } from '@/components/ui/card';
 import { StatusBadge } from '@/components/StatusBadge';
+import { DOCUMENT_LIST_STATUS } from '@/constants';
 import { cn } from '@/lib/utils';
-
-const STATUS_ACCENT: Record<DocumentSummaryDto['status'], string> = {
-  pending: 'border-l-amber-400',
-  processing: 'border-l-blue-500',
-  ready: 'border-l-emerald-500',
-  failed: 'border-l-red-500',
-};
-
-const STATUS_ICON_BG: Record<DocumentSummaryDto['status'], string> = {
-  pending: 'bg-amber-50 text-amber-600',
-  processing: 'bg-blue-50 text-blue-600',
-  ready: 'bg-emerald-50 text-emerald-600',
-  failed: 'bg-red-50 text-red-600',
-};
 
 function formatUploadedAt(iso: string) {
   const date = new Date(iso);
@@ -58,12 +46,12 @@ export function DocumentList({ documents }: { documents: DocumentSummaryDto[] })
   return (
     <div className="space-y-2">
       {documents.map((doc) => {
-        const interactive = doc.status === 'ready';
+        const interactive = doc.status === DOCUMENT_STATUS.READY;
         const inner = (
           <Card
             className={cn(
               'group flex-row items-center gap-4 border-l-4 py-4 shadow-sm transition-all',
-              STATUS_ACCENT[doc.status],
+              DOCUMENT_LIST_STATUS.accent[doc.status],
               interactive
                 ? 'hover:border-ring hover:shadow-md cursor-pointer hover:-translate-y-px'
                 : 'opacity-95',
@@ -72,7 +60,7 @@ export function DocumentList({ documents }: { documents: DocumentSummaryDto[] })
             <div
               className={cn(
                 'ml-2 flex size-10 shrink-0 items-center justify-center rounded-lg',
-                STATUS_ICON_BG[doc.status],
+                DOCUMENT_LIST_STATUS.iconBg[doc.status],
               )}
             >
               <FileText className="size-5" />
@@ -85,7 +73,7 @@ export function DocumentList({ documents }: { documents: DocumentSummaryDto[] })
                 {doc.pageCount != null && <span aria-hidden>·</span>}
                 <span>{formatUploadedAt(doc.createdAt)}</span>
               </div>
-              {doc.status === 'failed' && doc.error && (
+              {doc.status === DOCUMENT_STATUS.FAILED && doc.error && (
                 <div className="bg-destructive/5 text-destructive mt-2 flex items-start gap-1.5 rounded-md px-2 py-1.5 text-xs">
                   <AlertCircle className="mt-0.5 size-3.5 shrink-0" />
                   <span>{doc.error}</span>

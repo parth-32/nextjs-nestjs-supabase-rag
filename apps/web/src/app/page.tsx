@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { LogOut, RefreshCw, Scale } from 'lucide-react';
+import { APP_NAME, DOCUMENT_STATUS } from '@ccp/shared';
 import { useAuth } from '@/components/AuthProvider';
 import { useDocuments } from '@/hooks/use-api';
 import { PdfUpload } from '@/components/PdfUpload';
@@ -30,7 +31,7 @@ export default function HomePage() {
   }
 
   const email = session.user.email ?? '';
-  const readyCount = documents?.filter((d) => d.status === 'ready').length ?? 0;
+  const readyCount = documents?.filter((d) => d.status === DOCUMENT_STATUS.READY).length ?? 0;
 
   return (
     <main className="min-h-screen">
@@ -41,7 +42,7 @@ export default function HomePage() {
               <Scale className="size-5" />
             </div>
             <div className="min-w-0">
-              <h1 className="truncate text-lg font-semibold tracking-tight">Compliance Copilot</h1>
+              <h1 className="truncate text-lg font-semibold tracking-tight">{APP_NAME}</h1>
               <p className="text-muted-foreground truncate text-sm">{email}</p>
             </div>
           </div>

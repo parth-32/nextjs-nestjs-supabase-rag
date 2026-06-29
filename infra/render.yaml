@@ -4,10 +4,10 @@
 services:
   - type: web
     name: compliance-copilot-api
-    runtime: docker
-    dockerfilePath: ./infra/Dockerfile.api
-    dockerContext: .
+    runtime: node
     plan: starter
+    buildCommand: pnpm install --frozen-lockfile && pnpm --filter @ccp/shared build && pnpm --filter @ccp/api build
+    startCommand: pnpm --filter @ccp/api start:prod
     healthCheckPath: /health
     autoDeploy: true
     envVars:
@@ -33,11 +33,3 @@ services:
         value: gemini-2.5-flash
       - key: GEMINI_EMBEDDING_DIM
         value: 768
-      - key: RAG_TOP_K
-        value: 5
-      - key: RAG_MIN_SCORE
-        value: 0.45
-      - key: CHUNK_TARGET_TOKENS
-        value: 800
-      - key: CHUNK_OVERLAP_TOKENS
-        value: 120

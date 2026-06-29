@@ -10,12 +10,10 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
-import { DocumentSummaryDto, UploadDocumentResponse } from '@ccp/shared';
+import { DEFAULT_MAX_UPLOAD_BYTES, DocumentSummaryDto, UploadDocumentResponse } from '@ccp/shared';
 import { AuthGuard, AuthUser } from '../common/auth/auth.guard';
 import { CurrentUser } from '../common/auth/current-user.decorator';
 import { DocumentsService } from './documents.service';
-
-const MAX_UPLOAD_BYTES = Number(process.env.MAX_UPLOAD_BYTES ?? 20 * 1024 * 1024);
 
 @Controller('documents')
 @UseGuards(AuthGuard)
@@ -26,7 +24,10 @@ export class DocumentsController {
   @UseInterceptors(
     FileInterceptor('file', {
       storage: memoryStorage(),
-      limits: { fileSize: MAX_UPLOAD_BYTES, files: 1 },
+      limits: {
+        fileSize: Number(process.env.MAX_UPLOAD_BYTES ?? DEFAULT_MAX_UPLOAD_BYTES),
+        files: 1,
+      },
     }),
   )
   upload(

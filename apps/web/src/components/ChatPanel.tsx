@@ -7,6 +7,7 @@ import { Bot, MessageSquare, Send, Sparkles, User } from 'lucide-react';
 import type { Citation } from '@ccp/shared';
 import { api } from '@/lib/api';
 import { useMessages } from '@/hooks/use-api';
+import { CHAT_SUGGESTED_QUESTIONS } from '@/constants';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -20,12 +21,6 @@ interface UiMessage {
   content: string;
   citations: Citation[];
 }
-
-const SUGGESTED_QUESTIONS = [
-  'What are the key obligations?',
-  'What risks should I watch for?',
-  'Are there any gaps or missing info?',
-];
 
 function TypingIndicator() {
   return (
@@ -147,7 +142,7 @@ export function ChatPanel({ documentId, className }: { documentId: string; class
               Get answers with page citations from your uploaded PDF.
             </p>
             <div className="mt-5 flex w-full max-w-sm flex-col gap-1.5">
-              {SUGGESTED_QUESTIONS.map((q) => (
+              {CHAT_SUGGESTED_QUESTIONS.map((q) => (
                 <button
                   key={q}
                   type="button"

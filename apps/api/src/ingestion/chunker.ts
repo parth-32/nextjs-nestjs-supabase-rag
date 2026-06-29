@@ -13,6 +13,8 @@
  * good-enough heuristic that avoids pulling in a heavy tokenizer.
  */
 
+import { INGESTION } from '../constants';
+
 export interface PageText {
   page: number; // 1-based
   text: string;
@@ -36,10 +38,8 @@ interface Segment {
   tokens: number;
 }
 
-const CHARS_PER_TOKEN = 4;
-
 export function estimateTokens(text: string): number {
-  return Math.ceil(text.length / CHARS_PER_TOKEN);
+  return Math.ceil(text.length / INGESTION.CHARS_PER_TOKEN);
 }
 
 export function chunkPages(pages: PageText[], options: ChunkOptions): Chunk[] {
@@ -126,7 +126,7 @@ function enforceMaxSize(text: string, targetTokens: number): string[] {
 }
 
 function hardSplit(text: string, targetTokens: number): string[] {
-  const maxChars = targetTokens * CHARS_PER_TOKEN;
+  const maxChars = targetTokens * INGESTION.CHARS_PER_TOKEN;
   const out: string[] = [];
   for (let i = 0; i < text.length; i += maxChars) {
     out.push(text.slice(i, i + maxChars));

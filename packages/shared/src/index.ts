@@ -4,7 +4,21 @@
  * drifting apart.
  */
 
-export type DocumentStatus = 'pending' | 'processing' | 'ready' | 'failed';
+import type { DocumentStatus } from './constants.js';
+
+export {
+  API_PATHS,
+  APP_DESCRIPTION,
+  APP_NAME,
+  DEFAULT_MAX_UPLOAD_BYTES,
+  DOCUMENT_POLL_INTERVAL_MS,
+  DOCUMENT_STATUS,
+  PDF_MIME_TYPE,
+  SUMMARY_SECTION_KEYS,
+  isDocumentProcessing,
+  isDocumentReady,
+} from './constants.js';
+export type { DocumentStatus, SummarySectionKey } from './constants.js';
 
 export interface DocumentSummaryDto {
   id: string;

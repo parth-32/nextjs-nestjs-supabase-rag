@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, ClipboardList, FileText, MessageSquare } from 'lucide-react';
+import { DOCUMENT_STATUS } from '@ccp/shared';
 import { useAuth } from '@/components/AuthProvider';
 import { useDocument } from '@/hooks/use-api';
 import { ChatPanel } from '@/components/ChatPanel';
@@ -72,7 +73,7 @@ export default function DocumentWorkspace() {
           </p>
         )}
 
-        {doc && doc.status !== 'ready' ? (
+        {doc && doc.status !== DOCUMENT_STATUS.READY ? (
           <Card className="flex flex-1 flex-col items-center justify-center border-dashed py-16 text-center shadow-sm">
             <div className="bg-primary/10 text-primary mb-4 flex size-14 items-center justify-center rounded-2xl">
               <Spinner className="size-6" />

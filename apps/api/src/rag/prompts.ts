@@ -1,8 +1,10 @@
 import { RetrievedChunk, StoredChunk } from './retrieval.service';
+import { CHAT } from '../constants';
+import { APP_NAME } from '@ccp/shared';
 
-export const NOT_FOUND_MESSAGE = "I couldn't find information about that in this document.";
+export const NOT_FOUND_MESSAGE = CHAT.NOT_FOUND_MESSAGE;
 
-export const CHAT_SYSTEM_INSTRUCTION = `You are Compliance Copilot, an assistant that answers questions strictly about a single uploaded compliance document.
+export const CHAT_SYSTEM_INSTRUCTION = `You are ${APP_NAME}, an assistant that answers questions strictly about a single uploaded compliance document.
 
 Rules:
 - Use ONLY the information in the provided context. Do not use outside knowledge.

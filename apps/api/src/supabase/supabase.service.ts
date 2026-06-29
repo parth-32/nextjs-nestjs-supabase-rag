@@ -1,6 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { PDF_MIME_TYPE } from '@ccp/shared';
 import { AppConfig } from '../config/configuration';
 
 /**
@@ -31,7 +32,7 @@ export class SupabaseService implements OnModuleInit {
   async uploadPdf(path: string, data: Buffer): Promise<void> {
     const { error } = await this.client.storage
       .from(this.bucket)
-      .upload(path, data, { contentType: 'application/pdf', upsert: true });
+      .upload(path, data, { contentType: PDF_MIME_TYPE, upsert: true });
     if (error) throw new Error(`Storage upload failed: ${error.message}`);
   }
 

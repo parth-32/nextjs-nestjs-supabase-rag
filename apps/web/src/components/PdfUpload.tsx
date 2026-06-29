@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react';
 import { FileUp, Upload } from 'lucide-react';
 import { useUploadDocument } from '@/hooks/use-api';
+import { DEFAULT_MAX_UPLOAD_BYTES, PDF_MIME_TYPE } from '@ccp/shared';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { cn } from '@/lib/utils';
@@ -15,8 +16,13 @@ export function PdfUpload() {
 
   const handleFile = (file: File | undefined) => {
     if (!file) return;
-    if (file.type !== 'application/pdf') {
+    if (file.type !== PDF_MIME_TYPE) {
       setError('Please select a PDF file.');
+      return;
+    }
+    if (file.size > DEFAULT_MAX_UPLOAD_BYTES) {
+      const maxMb = Math.round(DEFAULT_MAX_UPLOAD_BYTES / (1024 * 1024));
+      setError(`File is too large. Maximum size is ${maxMb} MB.`);
       return;
     }
     setError(null);
@@ -94,7 +100,7 @@ export function PdfUpload() {
         <input
           ref={inputRef}
           type="file"
-          accept="application/pdf"
+          accept={PDF_MIME_TYPE}
           className="hidden"
           onChange={(e) => handleFile(e.target.files?.[0])}
         />

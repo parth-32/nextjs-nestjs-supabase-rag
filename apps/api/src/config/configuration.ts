@@ -19,12 +19,6 @@ export interface AppConfig {
     generationModel: string;
     embeddingDim: number;
   };
-  rag: {
-    topK: number;
-    minScore: number;
-    chunkTargetTokens: number;
-    chunkOverlapTokens: number;
-  };
 }
 
 export function buildConfig(env: Env): AppConfig {
@@ -43,12 +37,6 @@ export function buildConfig(env: Env): AppConfig {
       embeddingModel: env.GEMINI_EMBEDDING_MODEL,
       generationModel: env.GEMINI_GENERATION_MODEL,
       embeddingDim: env.GEMINI_EMBEDDING_DIM,
-    },
-    rag: {
-      topK: env.RAG_TOP_K,
-      minScore: env.RAG_MIN_SCORE,
-      chunkTargetTokens: env.CHUNK_TARGET_TOKENS,
-      chunkOverlapTokens: env.CHUNK_OVERLAP_TOKENS,
     },
   };
 }

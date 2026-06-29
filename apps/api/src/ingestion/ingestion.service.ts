@@ -1,13 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { DOCUMENT_STATUS } from '@ccp/shared';
 import { SupabaseService } from '../supabase/supabase.service';
 import { GeminiService } from '../gemini/gemini.service';
-import { AppConfig } from '../config/configuration';
+import { INGESTION } from '../constants';
 import { toVectorLiteral } from '../common/vector';
 import { chunkPages } from './chunker';
 import { extractPdf } from './pdf-extractor';
-
-const EMBED_BATCH_SIZE = 50;
 
 /**
  * Owns the document -> searchable-chunks pipeline. Designed to run
@@ -17,15 +15,11 @@ const EMBED_BATCH_SIZE = 50;
 @Injectable()
 export class IngestionService {
   private readonly logger = new Logger(IngestionService.name);
-  private readonly rag: AppConfig['rag'];
 
   constructor(
     private readonly supabase: SupabaseService,
     private readonly gemini: GeminiService,
-    config: ConfigService,
-  ) {
-    this.rag = config.get<AppConfig['rag']>('rag')!;
-  }
+  ) {}
 
   /**
    * Fire-and-forget entry point used by the upload handler. Never throws;
@@ -39,15 +33,15 @@ export class IngestionService {
 
   private async run(documentId: string, storagePath: string): Promise<void> {
     this.logger.log({ documentId }, 'Ingestion started');
-    await this.setStatus(documentId, 'processing');
+    await this.setStatus(documentId, DOCUMENT_STATUS.PROCESSING);
 
     try {
       const buffer = await this.supabase.downloadPdf(storagePath);
       const { pageCount, pages } = await extractPdf(buffer);
 
       const chunks = chunkPages(pages, {
-        targetTokens: this.rag.chunkTargetTokens,
-        overlapTokens: this.rag.chunkOverlapTokens,
+        targetTokens: INGESTION.CHUNK_TARGET_TOKENS,
+        overlapTokens: INGESTION.CHUNK_OVERLAP_TOKENS,
       });
 
       if (chunks.length === 0) {
@@ -58,7 +52,7 @@ export class IngestionService {
 
       const { error } = await this.supabase.db
         .from('documents')
-        .update({ status: 'ready', page_count: pageCount, error: null })
+        .update({ status: DOCUMENT_STATUS.READY, page_count: pageCount, error: null })
         .eq('id', documentId);
       if (error) throw new Error(error.message);
 
@@ -66,7 +60,7 @@ export class IngestionService {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Unknown ingestion error';
       this.logger.error({ documentId, message }, 'Ingestion failed');
-      await this.setStatus(documentId, 'failed', message);
+      await this.setStatus(documentId, DOCUMENT_STATUS.FAILED, message);
     }
   }
 
@@ -74,8 +68,8 @@ export class IngestionService {
     documentId: string,
     chunks: ReturnType<typeof chunkPages>,
   ): Promise<void> {
-    for (let i = 0; i < chunks.length; i += EMBED_BATCH_SIZE) {
-      const batch = chunks.slice(i, i + EMBED_BATCH_SIZE);
+    for (let i = 0; i < chunks.length; i += INGESTION.EMBED_BATCH_SIZE) {
+      const batch = chunks.slice(i, i + INGESTION.EMBED_BATCH_SIZE);
       const vectors = await this.gemini.embedDocuments(batch.map((c) => c.content));
 
       const rows = batch.map((c, j) => ({
@@ -94,7 +88,7 @@ export class IngestionService {
 
   private async setStatus(
     documentId: string,
-    status: 'processing' | 'failed',
+    status: typeof DOCUMENT_STATUS.PROCESSING | typeof DOCUMENT_STATUS.FAILED,
     errorMessage?: string,
   ): Promise<void> {
     await this.supabase.db

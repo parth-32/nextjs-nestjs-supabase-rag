@@ -11,8 +11,7 @@ import {
   SUMMARY_MERGE_INSTRUCTION,
   SUMMARY_SYSTEM_INSTRUCTION,
 } from '../rag/prompts';
-
-const MAX_GROUP_CHARS = 24_000;
+import { SUMMARY } from '../constants';
 
 const itemSchema = {
   type: 'OBJECT',
@@ -81,7 +80,7 @@ export class SummaryService {
     if (cached) return cached;
 
     const chunks = await this.retrieval.getAllChunks(documentId);
-    const groups = groupChunks(chunks, MAX_GROUP_CHARS);
+    const groups = groupChunks(chunks, SUMMARY.MAX_GROUP_CHARS);
 
     const partials: RawSummary[] = [];
     for (const group of groups) {

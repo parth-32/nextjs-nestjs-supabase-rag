@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Scale } from 'lucide-react';
+import { APP_NAME } from '@ccp/shared';
 import { getSupabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/components/AuthProvider';
 import { Button } from '@/components/ui/button';
@@ -65,7 +66,7 @@ export default function LoginPage() {
             <Scale className="size-6" />
           </div>
           <div>
-            <CardTitle className="text-2xl">Compliance Copilot</CardTitle>
+            <CardTitle className="text-2xl">{APP_NAME}</CardTitle>
             <CardDescription className="mt-1.5">
               {mode === 'signin' ? 'Sign in to your account' : 'Create an account'}
             </CardDescription>

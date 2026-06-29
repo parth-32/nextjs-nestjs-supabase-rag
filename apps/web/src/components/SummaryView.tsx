@@ -11,52 +11,35 @@ import {
   Shield,
   Sparkles,
 } from 'lucide-react';
-import type { ComplianceSummaryDto, SummaryItem } from '@ccp/shared';
+import type { SummaryItem } from '@ccp/shared';
+import { SUMMARY_SECTION_KEYS } from '@ccp/shared';
 import { useGenerateSummary, useSummary } from '@/hooks/use-api';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+  SUMMARY_COLLAPSED_COUNT,
+  SUMMARY_SECTION_ACCENTS,
+  SUMMARY_SECTION_LABELS,
+  SUMMARY_SECTION_MARKERS,
+} from '@/constants';
 import { cn } from '@/lib/utils';
 
-const COLLAPSED_COUNT = 8;
+const SECTION_ICONS = {
+  obligations: Shield,
+  risks: AlertTriangle,
+  gaps: HelpCircle,
+  recommendedActions: CheckCircle2,
+} as const;
 
-const SECTIONS: {
-  key: keyof Omit<ComplianceSummaryDto, 'documentId' | 'createdAt'>;
-  title: string;
-  icon: typeof Shield;
-  accent: string;
-  marker: string;
-}[] = [
-  {
-    key: 'obligations',
-    title: 'Key Obligations',
-    icon: Shield,
-    accent: 'text-slate-700',
-    marker: 'bg-slate-400',
-  },
-  {
-    key: 'risks',
-    title: 'Potential Risks',
-    icon: AlertTriangle,
-    accent: 'text-red-700',
-    marker: 'bg-red-400',
-  },
-  {
-    key: 'gaps',
-    title: 'Gaps / Missing Info',
-    icon: HelpCircle,
-    accent: 'text-amber-700',
-    marker: 'bg-amber-400',
-  },
-  {
-    key: 'recommendedActions',
-    title: 'Recommended Actions',
-    icon: CheckCircle2,
-    accent: 'text-emerald-700',
-    marker: 'bg-emerald-400',
-  },
-];
+const SECTIONS = SUMMARY_SECTION_KEYS.map((key) => ({
+  key,
+  title: SUMMARY_SECTION_LABELS[key],
+  icon: SECTION_ICONS[key],
+  accent: SUMMARY_SECTION_ACCENTS[key],
+  marker: SUMMARY_SECTION_MARKERS[key],
+}));
 
 function formatPages(pages: number[]) {
   if (pages.length === 0) return null;
@@ -167,8 +150,8 @@ function Section({
   items: SummaryItem[];
 }) {
   const [expanded, setExpanded] = useState(false);
-  const hasMore = items.length > COLLAPSED_COUNT;
-  const visibleItems = expanded || !hasMore ? items : items.slice(0, COLLAPSED_COUNT);
+  const hasMore = items.length > SUMMARY_COLLAPSED_COUNT;
+  const visibleItems = expanded || !hasMore ? items : items.slice(0, SUMMARY_COLLAPSED_COUNT);
 
   if (items.length === 0) {
     return (
@@ -212,7 +195,7 @@ function Section({
           onClick={() => setExpanded((v) => !v)}
         >
           <ChevronDown className={cn('size-3.5 transition-transform', expanded && 'rotate-180')} />
-          {expanded ? 'Show less' : `Show ${items.length - COLLAPSED_COUNT} more`}
+          {expanded ? 'Show less' : `Show ${items.length - SUMMARY_COLLAPSED_COUNT} more`}
         </Button>
       )}
     </section>

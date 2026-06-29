@@ -2,11 +2,8 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { ChatMessageDto, ComplianceSummaryDto, DocumentSummaryDto } from '@ccp/shared';
+import { DOCUMENT_POLL_INTERVAL_MS, isDocumentProcessing } from '@ccp/shared';
 import { api, ApiHttpError } from '@/lib/api';
-
-const POLL_MS = 3000;
-
-const isProcessing = (status?: string) => status === 'pending' || status === 'processing';
 
 /** List the user's documents; auto-polls while any are still processing. */
 export function useDocuments(enabled: boolean) {
@@ -15,8 +12,10 @@ export function useDocuments(enabled: boolean) {
     queryFn: api.listDocuments,
     enabled,
     refetchInterval: (query) =>
-      (query.state.data as DocumentSummaryDto[] | undefined)?.some((d) => isProcessing(d.status))
-        ? POLL_MS
+      (query.state.data as DocumentSummaryDto[] | undefined)?.some((d) =>
+        isDocumentProcessing(d.status),
+      )
+        ? DOCUMENT_POLL_INTERVAL_MS
         : false,
   });
 }
@@ -28,7 +27,9 @@ export function useDocument(id: string, enabled: boolean) {
     queryFn: () => api.getDocument(id),
     enabled,
     refetchInterval: (query) =>
-      isProcessing((query.state.data as DocumentSummaryDto | undefined)?.status) ? POLL_MS : false,
+      isDocumentProcessing((query.state.data as DocumentSummaryDto | undefined)?.status)
+        ? DOCUMENT_POLL_INTERVAL_MS
+        : false,
   });
 }
 

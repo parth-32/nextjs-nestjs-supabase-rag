@@ -1,8 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { AppConfig } from '../config/configuration';
 import { SupabaseService } from '../supabase/supabase.service';
 import { GeminiService } from '../gemini/gemini.service';
+import { RAG } from '../constants';
 import { toVectorLiteral } from '../common/vector';
 
 export interface RetrievedChunk {
@@ -21,15 +20,10 @@ export interface StoredChunk {
 
 @Injectable()
 export class RetrievalService {
-  private readonly rag: AppConfig['rag'];
-
   constructor(
     private readonly supabase: SupabaseService,
     private readonly gemini: GeminiService,
-    config: ConfigService,
-  ) {
-    this.rag = config.get<AppConfig['rag']>('rag')!;
-  }
+  ) {}
 
   /** Embed the query and return the top-k most similar chunks for a document. */
   async retrieve(documentId: string, query: string, topK?: number): Promise<RetrievedChunk[]> {
@@ -37,7 +31,7 @@ export class RetrievalService {
     const { data, error } = await this.supabase.db.rpc('match_chunks', {
       query_embedding: toVectorLiteral(embedding),
       p_document_id: documentId,
-      match_count: topK ?? this.rag.topK,
+      match_count: topK ?? RAG.TOP_K,
     });
     if (error) throw new BadRequestException(`Retrieval failed: ${error.message}`);
 
@@ -52,7 +46,7 @@ export class RetrievalService {
   }
 
   get minScore(): number {
-    return this.rag.minScore;
+    return RAG.MIN_SCORE;
   }
 
   /** Load all chunks for a document in order (used by summary map-reduce). */

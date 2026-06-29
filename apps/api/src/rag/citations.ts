@@ -1,45 +1,8 @@
 import type { Citation } from '@ccp/shared';
+import { RAG } from '../constants';
 import type { RetrievedChunk } from './retrieval.service';
 
-const SNIPPET_LENGTH = 280;
-const MAX_CITATIONS = 4;
-
-const STOP_WORDS = new Set([
-  'what',
-  'who',
-  'where',
-  'when',
-  'which',
-  'how',
-  'the',
-  'and',
-  'for',
-  'are',
-  'is',
-  'was',
-  'were',
-  'about',
-  'from',
-  'with',
-  'that',
-  'this',
-  'any',
-  'there',
-  'does',
-  'did',
-  'have',
-  'has',
-  'had',
-  'been',
-  'their',
-  'they',
-  'them',
-  'into',
-  'such',
-  'can',
-  'you',
-  'your',
-]);
+const STOP_WORDS = new Set<string>(RAG.STOP_WORDS);
 
 /** Pull page numbers the model cited inline, e.g. "(page 12)" or "(pages 3, 4)". */
 export function extractCitedPages(answer: string): number[] {
@@ -77,7 +40,7 @@ function stripPdfHeader(text: string): string {
 export function extractRelevantSnippet(
   content: string,
   question: string,
-  maxLength = SNIPPET_LENGTH,
+  maxLength = RAG.SNIPPET_LENGTH,
 ): string {
   const normalized = content.replace(/\s+/g, ' ').trim();
   if (normalized.length <= maxLength) return stripPdfHeader(normalized);
@@ -140,9 +103,9 @@ export function buildCitations(
     citedPages.length > 0
       ? (() => {
           const byPage = eligible.filter((c) => citedPages.includes(c.page));
-          return byPage.length > 0 ? byPage : eligible.slice(0, MAX_CITATIONS);
+          return byPage.length > 0 ? byPage : eligible.slice(0, RAG.MAX_CITATIONS);
         })()
-      : eligible.slice(0, MAX_CITATIONS);
+      : eligible.slice(0, RAG.MAX_CITATIONS);
 
   const bestPerPage = new Map<number, RetrievedChunk>();
   for (const chunk of selected) {
@@ -152,7 +115,7 @@ export function buildCitations(
 
   return [...bestPerPage.values()]
     .sort((a, b) => b.score - a.score)
-    .slice(0, MAX_CITATIONS)
+    .slice(0, RAG.MAX_CITATIONS)
     .map((c) => ({
       chunkId: c.chunkId,
       page: c.page,

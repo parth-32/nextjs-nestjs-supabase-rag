@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
-import { DocumentStatus, DocumentSummaryDto } from '@ccp/shared';
+import { DocumentStatus, DocumentSummaryDto, DOCUMENT_STATUS, PDF_MIME_TYPE } from '@ccp/shared';
 import { SupabaseService } from '../supabase/supabase.service';
 import { IngestionService } from '../ingestion/ingestion.service';
 
@@ -31,7 +31,7 @@ export class DocumentsService {
     userId: string,
     file: { originalname: string; mimetype: string; buffer: Buffer },
   ): Promise<{ id: string; status: DocumentStatus }> {
-    if (file.mimetype !== 'application/pdf') {
+    if (file.mimetype !== PDF_MIME_TYPE) {
       throw new BadRequestException('Only PDF files are supported');
     }
     if (!file.buffer?.length) {
@@ -48,14 +48,14 @@ export class DocumentsService {
       user_id: userId,
       filename: sanitizeFilename(file.originalname),
       storage_path: storagePath,
-      status: 'pending',
+      status: DOCUMENT_STATUS.PENDING,
     });
     if (error) throw new BadRequestException(`Failed to create document: ${error.message}`);
 
     // Kick off ingestion out-of-band; the client polls GET /documents/:id.
     this.ingestion.process(id, storagePath);
 
-    return { id, status: 'pending' };
+    return { id, status: DOCUMENT_STATUS.PENDING };
   }
 
   async list(userId: string): Promise<DocumentSummaryDto[]> {
@@ -90,7 +90,7 @@ export class DocumentsService {
   /** Ensures the document exists, is owned by the user, and is fully ingested. */
   async ensureReady(userId: string, id: string): Promise<DocumentRow> {
     const row = await this.getOwnedRow(userId, id);
-    if (row.status !== 'ready') {
+    if (row.status !== DOCUMENT_STATUS.READY) {
       throw new BadRequestException(`Document is not ready (status: ${row.status})`);
     }
     return row;
