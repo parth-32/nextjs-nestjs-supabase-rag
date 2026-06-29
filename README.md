@@ -35,7 +35,7 @@ Upload a compliance PDF, ask grounded questions with citations (RAG), and genera
 ## Deployment
 
 - **Database:** Supabase (run migrations on your project).
-- **API:** Render via [`infra/render.yaml`](infra/render.yaml).
+- **API:** Deploy manually (e.g. Render, Railway, Fly.io) — run `pnpm --filter @ccp/shared build && pnpm --filter @ccp/api build`, then `pnpm --filter @ccp/api start:prod`.
 - **Web:** Vercel with root directory `apps/web` (see [`apps/web/vercel.json`](apps/web/vercel.json)).
 
 Set production env vars in Render and Vercel; keep the service role key on the API only.
