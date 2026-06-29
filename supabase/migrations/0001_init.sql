@@ -1,7 +1,7 @@
 -- ============================================================================
 -- Compliance Copilot - initial schema
 -- Postgres + pgvector. Embedding dimension is 768 and MUST match
--- GEMINI_EMBEDDING_DIM in the API environment.
+-- Embedding dimension is 768 and MUST match GEMINI.EMBEDDING_DIM in backend/src/constants.ts.
 -- ============================================================================
 
 create extension if not exists vector;

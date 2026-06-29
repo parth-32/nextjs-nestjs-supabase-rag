@@ -25,7 +25,7 @@ export class DocumentsController {
     FileInterceptor('file', {
       storage: memoryStorage(),
       limits: {
-        fileSize: Number(process.env.MAX_UPLOAD_BYTES ?? DEFAULT_MAX_UPLOAD_BYTES),
+        fileSize: DEFAULT_MAX_UPLOAD_BYTES,
         files: 1,
       },
     }),

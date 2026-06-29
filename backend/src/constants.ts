@@ -1,5 +1,11 @@
 /** Server-only tuning constants (not needed by the web client). */
 
+export const GEMINI = {
+  EMBEDDING_MODEL: 'gemini-embedding-001',
+  GENERATION_MODEL: 'gemini-2.5-flash-lite',
+  EMBEDDING_DIM: 768,
+} as const;
+
 export const INGESTION = {
   EMBED_BATCH_SIZE: 50,
   CHARS_PER_TOKEN: 4,

@@ -9,10 +9,12 @@ build/
 out/
 *.tsbuildinfo
 
-# env
+# env (per-app; never commit secrets)
 .env
 .env.local
 .env.*.local
+backend/.env
+frontend/.env
 
 # logs
 *.log

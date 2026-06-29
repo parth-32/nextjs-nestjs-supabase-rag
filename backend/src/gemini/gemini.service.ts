@@ -2,6 +2,7 @@ import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { GoogleGenAI } from '@google/genai';
 import { AppConfig } from '../config/configuration';
+import { GEMINI } from '../constants';
 
 type EmbeddingTaskType = 'RETRIEVAL_DOCUMENT' | 'RETRIEVAL_QUERY';
 
@@ -29,17 +30,15 @@ interface StructuredParams<T> {
 export class GeminiService implements OnModuleInit {
   private readonly logger = new Logger(GeminiService.name);
   private client!: GoogleGenAI;
-  private cfg!: AppConfig['gemini'];
 
   constructor(private readonly config: ConfigService) {}
 
   onModuleInit(): void {
     const gemini = this.config.get<AppConfig['gemini']>('gemini');
     if (!gemini) throw new Error('Gemini config missing');
-    this.cfg = gemini;
     this.client = new GoogleGenAI({ apiKey: gemini.apiKey });
     this.logger.log(
-      `Gemini models: embed=${gemini.embeddingModel}, generate=${gemini.generationModel}`,
+      `Gemini models: embed=${GEMINI.EMBEDDING_MODEL}, generate=${GEMINI.GENERATION_MODEL}`,
     );
   }
 
@@ -57,11 +56,11 @@ export class GeminiService implements OnModuleInit {
   private async embedBatch(texts: string[], taskType: EmbeddingTaskType): Promise<number[][]> {
     if (texts.length === 0) return [];
     const res = await this.client.models.embedContent({
-      model: this.cfg.embeddingModel,
+      model: GEMINI.EMBEDDING_MODEL,
       contents: texts,
       config: {
         taskType,
-        outputDimensionality: this.cfg.embeddingDim,
+        outputDimensionality: GEMINI.EMBEDDING_DIM,
       },
     });
     const embeddings = res.embeddings ?? [];
@@ -76,7 +75,7 @@ export class GeminiService implements OnModuleInit {
   /** Stream a grounded answer token-by-token. */
   async *streamAnswer(params: StreamAnswerParams): AsyncGenerator<string> {
     const stream = await this.client.models.generateContentStream({
-      model: this.cfg.generationModel,
+      model: GEMINI.GENERATION_MODEL,
       contents: params.prompt,
       config: {
         systemInstruction: params.systemInstruction,
@@ -92,7 +91,7 @@ export class GeminiService implements OnModuleInit {
   /** Generate a JSON object constrained by a response schema. */
   async generateStructured<T>(params: StructuredParams<T>): Promise<T> {
     const res = await this.client.models.generateContent({
-      model: this.cfg.generationModel,
+      model: GEMINI.GENERATION_MODEL,
       contents: params.prompt,
       config: {
         systemInstruction: params.systemInstruction,

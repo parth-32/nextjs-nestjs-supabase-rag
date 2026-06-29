@@ -15,9 +15,6 @@ export interface AppConfig {
   };
   gemini: {
     apiKey: string;
-    embeddingModel: string;
-    generationModel: string;
-    embeddingDim: number;
   };
 }
 
@@ -34,9 +31,6 @@ export function buildConfig(env: Env): AppConfig {
     },
     gemini: {
       apiKey: env.GEMINI_API_KEY,
-      embeddingModel: env.GEMINI_EMBEDDING_MODEL,
-      generationModel: env.GEMINI_GENERATION_MODEL,
-      embeddingDim: env.GEMINI_EMBEDDING_DIM,
     },
   };
 }
