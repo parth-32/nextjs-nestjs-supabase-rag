@@ -15,7 +15,7 @@
       "routePrefix": "/api",
       "framework": "nestjs",
       "buildCommand": "pnpm --filter @ccp/shared build && pnpm --filter @ccp/backend build",
-      "includeFiles": "packages/shared/dist/**"
+      "includeFiles": ["packages/shared/dist/**", "backend/node_modules/**"]
     }
   }
 }
