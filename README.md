@@ -43,16 +43,16 @@ Set env vars on each host separately — never copy `backend/.env` into the fron
 
 ### Render
 
-1. **Supabase** — Apply migrations (`pnpm db:push`). In **Authentication → URL Configuration**, set Site URL to `https://compliance-copilot-web.onrender.com` and add redirect URLs for your frontend host (and `http://localhost:3000/**` for local dev).
+1. **Supabase** — Apply migrations (`pnpm db:push`). In **Authentication → URL Configuration**, set Site URL to `https://compliance-copilot-web-6o09.onrender.com` and add redirect URLs for your frontend host (and `http://localhost:3000/**` for local dev).
 2. **Blueprint** — In [Render](https://dashboard.render.com): **New → Blueprint**, connect this repo, and fill in the prompted secrets (`SUPABASE_*`, `GEMINI_API_KEY`).
-3. **Verify** — Backend health: `https://compliance-copilot-api.onrender.com/health`. Then sign in, upload a PDF, and run a chat on the frontend URL.
+3. **Verify** — Backend health: `https://compliance-copilot-api-nw0w.onrender.com/health`. Then sign in, upload a PDF, and run a chat on the frontend URL.
 
 Both services build from the **repo root** (monorepo). The API listens on Render’s `PORT`; locally it uses `API_PORT` (default `4000`).
 
-| Service  | Render name              | URL                                           |
-| -------- | ------------------------ | --------------------------------------------- |
-| Backend  | `compliance-copilot-api` | `https://compliance-copilot-api.onrender.com` |
-| Frontend | `compliance-copilot-web` | `https://compliance-copilot-web.onrender.com` |
+| Service  | Render name              | URL                                                |
+| -------- | ------------------------ | -------------------------------------------------- |
+| Backend  | `compliance-copilot-api` | `https://compliance-copilot-api-nw0w.onrender.com` |
+| Frontend | `compliance-copilot-web` | `https://compliance-copilot-web-6o09.onrender.com` |
 
 If you rename services, update `CORS_ORIGINS`, `NEXT_PUBLIC_API_URL`, and Supabase Auth URLs to match.
 

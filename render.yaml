@@ -24,7 +24,7 @@ services:
       - key: GEMINI_API_KEY
         sync: false
       - key: CORS_ORIGINS
-        value: https://compliance-copilot-web.onrender.com
+        value: https://compliance-copilot-web-6o09.onrender.com
 
   - type: web
     name: compliance-copilot-web
@@ -38,7 +38,7 @@ services:
       - key: NODE_ENV
         value: production
       - key: NEXT_PUBLIC_API_URL
-        value: https://compliance-copilot-api.onrender.com
+        value: https://compliance-copilot-api-nw0w.onrender.com
       - key: NEXT_PUBLIC_SUPABASE_URL
         sync: false
       - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
