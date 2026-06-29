@@ -1,6 +1,21 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
+import { ApiError } from '@google/genai';
 import { Logger } from 'nestjs-pino';
 import { Request, Response } from 'express';
+
+/** Pull a user-facing message and HTTP status from a Gemini / Google GenAI ApiError. */
+function fromGeminiApiError(exception: ApiError): { status: number; message: string } {
+  let message = 'The AI service is temporarily unavailable. Please try again later.';
+  try {
+    const parsed = JSON.parse(exception.message) as { error?: { message?: string } };
+    if (parsed.error?.message) message = parsed.error.message;
+  } catch {
+    // keep default message
+  }
+  const status =
+    exception.status >= 400 && exception.status < 600 ? exception.status : HttpStatus.BAD_GATEWAY;
+  return { status, message };
+}
 
 /**
  * Converts any thrown error into a consistent JSON error envelope and makes
@@ -27,7 +42,11 @@ export class AllExceptionsFilter implements ExceptionFilter {
     }
 
     const isHttp = exception instanceof HttpException;
-    const status = isHttp ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
+    const geminiError = exception instanceof ApiError ? fromGeminiApiError(exception) : null;
+
+    const status = isHttp
+      ? exception.getStatus()
+      : (geminiError?.status ?? HttpStatus.INTERNAL_SERVER_ERROR);
 
     let message: string | string[] = 'Internal server error';
     let error = 'InternalServerError';
@@ -41,10 +60,15 @@ export class AllExceptionsFilter implements ExceptionFilter {
         message = (b.message as string | string[]) ?? exception.message;
         error = (b.error as string) ?? exception.name;
       }
+    } else if (geminiError) {
+      message = geminiError.message;
+      error =
+        geminiError.status === HttpStatus.SERVICE_UNAVAILABLE ? 'ServiceUnavailable' : 'BadGateway';
     }
 
     if (status >= 500) {
-      this.logger.error({ err: exception, path: req.url }, 'Unhandled exception');
+      const logMessage = geminiError ? 'Upstream AI service error' : 'Unhandled exception';
+      this.logger.error({ err: exception, path: req.url }, logMessage);
     }
 
     res.status(status).json({

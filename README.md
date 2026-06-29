@@ -36,7 +36,6 @@ Upload a compliance PDF, ask grounded questions with citations (RAG), and genera
 ## Deployment
 
 - **Database:** Supabase (run migrations on your project).
-- **Render (frontend + backend):** Use [`render.yaml`](render.yaml) — steps below.
 - **Vercel Services (frontend + backend together):** One Vercel project via root [`vercel.json`](vercel.json) — steps below.
 - **Vercel (separate projects):** Set root directory to `frontend` or `backend` and configure build commands in each package's `package.json` (no root `vercel.json` needed).
 
@@ -74,21 +73,6 @@ Run all services locally: `vercel dev -L` from the repo root (Vercel CLI 48.4.0+
 
 Docs: [Vercel Services](https://vercel.com/docs/services), [routing](https://vercel.com/docs/services/routing).
 
-### Render
-
-1. **Supabase** — Apply migrations (`pnpm db:push`). In **Authentication → URL Configuration**, set Site URL to `https://compliance-copilot-web-6o09.onrender.com` and add redirect URLs for your frontend host (and `http://localhost:3000/**` for local dev).
-2. **Blueprint** — In [Render](https://dashboard.render.com): **New → Blueprint**, connect this repo, and fill in the prompted secrets (`SUPABASE_*`, `GEMINI_API_KEY`).
-3. **Verify** — Backend health: `https://compliance-copilot-api-nw0w.onrender.com/health`. Then sign in, upload a PDF, and run a chat on the frontend URL.
-
-Both services build from the **repo root** (monorepo). The API listens on Render’s `PORT`; locally it uses `API_PORT` (default `4000`).
-
-| Service  | Render name              | URL                                                |
-| -------- | ------------------------ | -------------------------------------------------- |
-| Backend  | `compliance-copilot-api` | `https://compliance-copilot-api-nw0w.onrender.com` |
-| Frontend | `compliance-copilot-web` | `https://compliance-copilot-web-6o09.onrender.com` |
-
-If you rename services, update `CORS_ORIGINS`, `NEXT_PUBLIC_API_URL`, and Supabase Auth URLs to match.
-
 ### Vercel (separate backend project)
 
 If deploying the API as its own Vercel project (not Services), set root directory to `backend`, framework **NestJS**, enable **Include files outside the root directory**, and use build command:
@@ -97,14 +81,14 @@ If deploying the API as its own Vercel project (not Services), set root director
 
 **Backend env** (`compliance-copilot-api`):
 
-| Variable                    | Required                            |
-| --------------------------- | ----------------------------------- |
-| `SUPABASE_URL`              | yes                                 |
-| `SUPABASE_SERVICE_ROLE_KEY` | yes                                 |
-| `SUPABASE_STORAGE_BUCKET`   | yes                                 |
-| `GEMINI_API_KEY`            | yes                                 |
-| `NODE_ENV`                  | `production`                        |
-| `CORS_ORIGINS`              | frontend URL (set in `render.yaml`) |
+| Variable                    | Required     |
+| --------------------------- | ------------ |
+| `SUPABASE_URL`              | yes          |
+| `SUPABASE_SERVICE_ROLE_KEY` | yes          |
+| `SUPABASE_STORAGE_BUCKET`   | yes          |
+| `GEMINI_API_KEY`            | yes          |
+| `NODE_ENV`                  | `production` |
+| `CORS_ORIGINS`              | frontend URL |
 
 **Frontend env** (`compliance-copilot-web` — `NEXT_PUBLIC_*` only):
 
