@@ -36,24 +36,38 @@ Upload a compliance PDF, ask grounded questions with citations (RAG), and genera
 ## Deployment
 
 - **Database:** Supabase (run migrations on your project).
-- **Backend:** Deploy manually (e.g. Render, Railway, Fly.io) — run `pnpm --filter @ccp/shared build && pnpm --filter @ccp/backend build`, then `pnpm --filter @ccp/backend start:prod`.
-- **Frontend:** Vercel with root directory `frontend` (see [`frontend/vercel.json`](frontend/vercel.json)).
+- **Render (frontend + backend):** Use [`render.yaml`](render.yaml) — steps below.
+- **Frontend on Vercel (optional):** Root directory `frontend` (see [`frontend/vercel.json`](frontend/vercel.json)).
 
-Set env vars on each host separately — never copy `backend/.env` into Vercel.
+Set env vars on each host separately — never copy `backend/.env` into the frontend host.
 
-**Backend** (Render, Railway, Fly.io, etc.):
+### Render
 
-| Variable                    | Required               |
-| --------------------------- | ---------------------- |
-| `SUPABASE_URL`              | yes                    |
-| `SUPABASE_SERVICE_ROLE_KEY` | yes                    |
-| `SUPABASE_STORAGE_BUCKET`   | yes                    |
-| `GEMINI_API_KEY`            | yes                    |
-| `NODE_ENV`                  | `production`           |
-| `API_PORT`                  | host default or `4000` |
-| `CORS_ORIGINS`              | your Vercel URL        |
+1. **Supabase** — Apply migrations (`pnpm db:push`). In **Authentication → URL Configuration**, set Site URL to `https://compliance-copilot-web.onrender.com` and add redirect URLs for your frontend host (and `http://localhost:3000/**` for local dev).
+2. **Blueprint** — In [Render](https://dashboard.render.com): **New → Blueprint**, connect this repo, and fill in the prompted secrets (`SUPABASE_*`, `GEMINI_API_KEY`).
+3. **Verify** — Backend health: `https://compliance-copilot-api.onrender.com/health`. Then sign in, upload a PDF, and run a chat on the frontend URL.
 
-**Frontend** (Vercel — `NEXT_PUBLIC_*` only):
+Both services build from the **repo root** (monorepo). The API listens on Render’s `PORT`; locally it uses `API_PORT` (default `4000`).
+
+| Service  | Render name              | URL                                           |
+| -------- | ------------------------ | --------------------------------------------- |
+| Backend  | `compliance-copilot-api` | `https://compliance-copilot-api.onrender.com` |
+| Frontend | `compliance-copilot-web` | `https://compliance-copilot-web.onrender.com` |
+
+If you rename services, update `CORS_ORIGINS`, `NEXT_PUBLIC_API_URL`, and Supabase Auth URLs to match.
+
+**Backend env** (`compliance-copilot-api`):
+
+| Variable                    | Required                            |
+| --------------------------- | ----------------------------------- |
+| `SUPABASE_URL`              | yes                                 |
+| `SUPABASE_SERVICE_ROLE_KEY` | yes                                 |
+| `SUPABASE_STORAGE_BUCKET`   | yes                                 |
+| `GEMINI_API_KEY`            | yes                                 |
+| `NODE_ENV`                  | `production`                        |
+| `CORS_ORIGINS`              | frontend URL (set in `render.yaml`) |
+
+**Frontend env** (`compliance-copilot-web` — `NEXT_PUBLIC_*` only):
 
 | Variable                        | Required                 |
 | ------------------------------- | ------------------------ |

@@ -20,7 +20,7 @@ export interface AppConfig {
 
 export function buildConfig(env: Env): AppConfig {
   return {
-    port: env.API_PORT,
+    port: env.PORT ?? env.API_PORT,
     corsOrigins: env.CORS_ORIGINS.split(',')
       .map((o) => o.trim())
       .filter(Boolean),
