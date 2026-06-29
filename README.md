@@ -48,7 +48,7 @@ Deploy both apps on one domain (e.g. `your-app.vercel.app` for the UI, `your-app
 
 1. **Import** the repo at [vercel.com/new](https://vercel.com/new).
 2. **Application Preset:** **Services** (not NestJS or Next.js alone).
-3. **Root Directory:** `.` (repo root — not `backend` or `frontend`).
+3. **Root Directory:** leave empty / `.` (repo root). **Do not** set it to `backend` or `frontend` — Vercel only reads root `vercel.json` from the project root.
 4. **vercel.json:** Root [`vercel.json`](vercel.json) defines `experimentalServices` for both apps.
 5. **Environment variables** (Project Settings → one set for both services):
 
