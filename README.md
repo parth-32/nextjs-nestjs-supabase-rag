@@ -38,7 +38,7 @@ Upload a compliance PDF, ask grounded questions with citations (RAG), and genera
 - **Database:** Supabase (run migrations on your project).
 - **Render (frontend + backend):** Use [`render.yaml`](render.yaml) — steps below.
 - **Frontend on Vercel (optional):** Root directory `frontend` (see [`frontend/vercel.json`](frontend/vercel.json)).
-- **Backend on Vercel (optional):** Root directory `backend` (see [`backend/vercel.json`](backend/vercel.json)). Set **Framework Preset** to **Other** so the explicit `@vercel/node` config is used. Enable **Include files outside the root directory**.
+- **Backend on Vercel (optional):** Root directory `backend` (see [`backend/vercel.json`](backend/vercel.json)). Use **Framework Preset: NestJS** (auto-detected). Enable **Include files outside the root directory**.
 
 Set env vars on each host separately — never copy `backend/.env` into the frontend host.
 
