@@ -30,12 +30,6 @@ export const DOCUMENT_LIST_STATUS = {
   },
 } as const satisfies Record<string, Record<DocumentStatus, string>>;
 
-export const CHAT_SUGGESTED_QUESTIONS = [
-  'What are the key obligations?',
-  'What risks should I watch for?',
-  'Are there any gaps or missing info?',
-] as const;
-
 export const SUMMARY_COLLAPSED_COUNT = 8;
 
 export const SUMMARY_SECTION_LABELS: Record<SummarySectionKey, string> = {

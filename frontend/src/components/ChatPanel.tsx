@@ -7,7 +7,6 @@ import { Bot, MessageSquare, Send, Sparkles, User } from 'lucide-react';
 import type { Citation } from '@ccp/shared';
 import { api } from '@/lib/api';
 import { useMessages } from '@/hooks/use-api';
-import { CHAT_SUGGESTED_QUESTIONS } from '@/constants';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -141,19 +140,6 @@ export function ChatPanel({ documentId, className }: { documentId: string; class
             <p className="text-muted-foreground mt-1 max-w-xs text-xs">
               Get answers with page citations from your uploaded PDF.
             </p>
-            <div className="mt-5 flex w-full max-w-sm flex-col gap-1.5">
-              {CHAT_SUGGESTED_QUESTIONS.map((q) => (
-                <button
-                  key={q}
-                  type="button"
-                  disabled={streaming}
-                  onClick={() => void submitQuestion(q)}
-                  className="border-border/80 bg-card hover:border-primary/30 hover:bg-primary/5 text-foreground rounded-lg border px-3 py-2 text-left text-sm transition-colors disabled:opacity-50"
-                >
-                  {q}
-                </button>
-              ))}
-            </div>
           </div>
         )}
 
